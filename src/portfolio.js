@@ -4,6 +4,7 @@
 
 import emoji from "react-easy-emoji";
 import splashAnimation from "./assets/lottie/splashAnimation"; // Rename to your file name for custom animation
+import cardCenteringImg from "./assets/images/card-centering-demo.png";
 
 // -----------------------------------------------------------------------------
 // TODOs before deploy (search "TODO" in this file):
@@ -298,8 +299,11 @@ const bigProjects = {
     {
       image: require("./assets/images/cardCenteringLogo.png"),
       projectName: "Card Centering Analysis Tool",
-      projectDesc: "AI-powered computer-vision tool for trading card grading. Detects card borders via edge detection, measures left/right and top/bottom border ratios, and scores against PSA and BGS centering standards which helps decide which raw cards are worth the grading submission fee. Python + OpenCV.",
-      footerLink: []
+      projectDesc: "Full-stack tool for trading-card grading triage. A Node/Express backend integrates the eBay Browse API and a vision model (Claude) to estimate left/right and top/bottom border ratios and score centering against PSA and BGS standards, helping decide which raw cards are worth the grading submission fee. Node.js, Express, eBay API, Claude vision API.",
+      footerLink: [
+        { name: "View details", url: "/card-centering.html" },
+        { name: "GitHub", url: "https://github.com/KevinLu1993/<repo>" }
+      ]
     },
     {
       image: require("./assets/images/cyberIllustration.png"),
