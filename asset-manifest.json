@@ -1,0 +1,41 @@
+{
+  "files": {
+    "main.css": "/static/css/main.aa3e61e5.css",
+    "main.js": "/static/js/main.60a5c317.js",
+    "static/css/64.bba8fa55.chunk.css": "/static/css/64.bba8fa55.chunk.css",
+    "static/js/64.56dc6704.chunk.js": "/static/js/64.56dc6704.chunk.js",
+    "static/css/769.b3cbb36b.chunk.css": "/static/css/769.b3cbb36b.chunk.css",
+    "static/js/769.338a00ec.chunk.js": "/static/js/769.338a00ec.chunk.js",
+    "static/media/whatIDoAnim.gif": "/static/media/whatIDoAnim.9bd93659bd4bbe196acf.gif",
+    "static/media/greetingHero.gif": "/static/media/greetingHero.0d206f68864c7dba6cf8.gif",
+    "static/media/luminauraLogo.png": "/static/media/luminauraLogo.96b0bd4158938efc0aa8.png",
+    "static/media/phoenix1SolarLogo.png": "/static/media/phoenix1SolarLogo.44185955491866835f58.png",
+    "static/media/Montserrat-Regular.ttf": "/static/media/Montserrat-Regular.3cd786652b8a2e9d41f2.ttf",
+    "static/media/blueMarbleLogo.png": "/static/media/blueMarbleLogo.6fcd1c28f2537ca1fd5c.png",
+    "static/media/cyberIllustration.png": "/static/media/cyberIllustration.1984b257e1842d2f23a4.png",
+    "static/media/Agustina.woff": "/static/media/Agustina.eb0c59dda4cc308cba96.woff",
+    "static/media/cardCenteringLogo.png": "/static/media/cardCenteringLogo.895c7fad230953946ab7.png",
+    "static/media/crosslistLogo.png": "/static/media/crosslistLogo.c33feb44a1aa64ae9325.png",
+    "static/media/inboxLedLogo.png": "/static/media/inboxLedLogo.24f08925c16c9e98708b.png",
+    "static/media/freelanceLogo.png": "/static/media/freelanceLogo.dcec25d2e6c1f3671eef.png",
+    "static/media/contactMailDark.svg": "/static/media/contactMailDark.1db650d351729a0f17b4e3104e6a7b7a.svg",
+    "static/media/asuLogo.png": "/static/media/asuLogo.86fa887e3059d0c5fe90.png",
+    "static/media/mccLogo.png": "/static/media/mccLogo.5c4c87fad38fddd15828.png",
+    "static/media/cognizantLogo.png": "/static/media/cognizantLogo.082f5a83cc0ba022762e.png",
+    "static/media/lucidLogo.png": "/static/media/lucidLogo.20362496f82946b53229.png",
+    "static/media/skill.svg": "/static/media/skill.35a147662ab0a1d15e579690446e0258.svg",
+    "static/media/resume.pdf": "/static/media/resume.f0f733dd3cd732b39262.pdf",
+    "index.html": "/index.html",
+    "static/media/talksCardBack.svg": "/static/media/talksCardBack.73ed1545d58273ba64b0.svg",
+    "main.aa3e61e5.css.map": "/static/css/main.aa3e61e5.css.map",
+    "main.60a5c317.js.map": "/static/js/main.60a5c317.js.map",
+    "64.bba8fa55.chunk.css.map": "/static/css/64.bba8fa55.chunk.css.map",
+    "64.56dc6704.chunk.js.map": "/static/js/64.56dc6704.chunk.js.map",
+    "769.b3cbb36b.chunk.css.map": "/static/css/769.b3cbb36b.chunk.css.map",
+    "769.338a00ec.chunk.js.map": "/static/js/769.338a00ec.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.aa3e61e5.css",
+    "static/js/main.60a5c317.js"
+  ]
+}

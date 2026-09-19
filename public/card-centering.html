@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Card Centering Analyzer — Kevin Lu</title>
+<meta name="description" content="A full-stack tool that scores eBay trading-card listings for centering against PSA grading standards, to triage which raw cards are worth the grading submission fee." />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0f0f0f; --surface: #1a1a1a; --surface2: #222; --border: #2e2e2e;
+    --text: #f0f0f0; --muted: #8a8a8a; --faint: #6a6a6a;
+    --blue: #3b82f6; --green: #22c55e; --yellow: #eab308; --red: #ef4444;
+    --radius: 12px; --radius-sm: 8px;
+    --maxw: 860px;
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.6; font-size: 16px; -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 20px; }
+
+  /* Top bar */
+  .topbar { border-bottom: 1px solid var(--border); }
+  .topbar .wrap { display: flex; align-items: center; justify-content: space-between; height: 56px; }
+  .back { color: var(--muted); text-decoration: none; font-size: 14px; display: inline-flex; align-items: center; gap: 7px; transition: color .15s; }
+  .back:hover { color: var(--text); }
+  .back svg { width: 15px; height: 15px; }
+  .repo { color: var(--blue); text-decoration: none; font-size: 14px; }
+  .repo:hover { text-decoration: underline; }
+
+  /* Hero */
+  .hero { padding: 72px 0 48px; }
+  .hero .kind { color: var(--faint); font-size: 14px; margin-bottom: 14px; }
+  .hero h1 { font-size: clamp(30px, 6vw, 46px); line-height: 1.08; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 18px; }
+  .hero .lede { font-size: clamp(17px, 2.4vw, 20px); color: var(--muted); max-width: 62ch; }
+
+  /* Signature score card (the app's memorable element, rebuilt) */
+  .scorecard {
+    margin-top: 40px; background: var(--surface); border: 1px solid var(--green);
+    border-radius: var(--radius); padding: 22px 24px; max-width: 520px;
+  }
+  .scorecard .row1 { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
+  .scorecard .big { font-size: 44px; font-weight: 700; color: var(--green); line-height: 1; letter-spacing: -0.02em; }
+  .scorecard .verdict { font-size: 14px; color: var(--green); background: rgba(34,197,94,0.12); padding: 3px 10px; border-radius: 6px; }
+  .scorecard .bars { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 18px; }
+  .bar-lbl { font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+  .bar-track { height: 6px; background: var(--border); border-radius: 3px; position: relative; }
+  .bar-fill { height: 100%; border-radius: 3px; background: var(--green); position: absolute; top: 0; left: 0; }
+  .bar-mid { position: absolute; left: 50%; top: -2px; width: 1px; height: 10px; background: #666; }
+  .scorecard .note { font-size: 13px; color: var(--faint); margin-top: 16px; line-height: 1.5; }
+
+  /* Sections */
+  section { padding: 40px 0; border-top: 1px solid var(--border); }
+  section:first-of-type { border-top: none; }
+  h2 { font-size: 24px; font-weight: 650; letter-spacing: -0.01em; margin-bottom: 14px; }
+  h3 { font-size: 15px; font-weight: 600; color: var(--blue); margin-bottom: 8px; }
+  p { color: #cfcfcf; max-width: 66ch; margin-bottom: 14px; }
+  p:last-child { margin-bottom: 0; }
+  .prose strong { color: var(--text); font-weight: 600; }
+
+  /* Figures */
+  figure { margin: 28px 0 8px; }
+  .shot {
+    border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden;
+    background: var(--surface); box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+  }
+  .shot img { display: block; width: 100%; height: auto; }
+  figcaption { color: var(--muted); font-size: 14px; margin-top: 12px; max-width: 66ch; }
+  figcaption b { color: var(--text); font-weight: 600; }
+
+  /* How it works steps */
+  .flow { display: grid; gap: 12px; margin-top: 20px; }
+  .step {
+    display: grid; grid-template-columns: 26px 1fr; gap: 14px; align-items: start;
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm);
+    padding: 14px 16px;
+  }
+  .step .n { color: var(--faint); font-size: 14px; font-variant-numeric: tabular-nums; padding-top: 1px; }
+  .step p { margin: 0; max-width: none; font-size: 15px; }
+  .callout {
+    margin-top: 22px; border-left: 3px solid var(--blue); background: rgba(59,130,246,0.06);
+    padding: 14px 18px; border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  }
+  .callout p { margin: 0; font-size: 15px; color: #cbd5e1; max-width: none; }
+
+  /* Stack chips */
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+  .chip {
+    font-size: 13px; color: var(--text); background: var(--surface2);
+    border: 1px solid var(--border); border-radius: 999px; padding: 5px 13px;
+  }
+
+  footer { border-top: 1px solid var(--border); padding: 32px 0 60px; }
+  footer p { color: var(--faint); font-size: 14px; max-width: none; }
+  footer a { color: var(--blue); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+
+  a:focus-visible, .back:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; border-radius: 3px; }
+
+  @media (max-width: 560px) {
+    .hero { padding: 48px 0 32px; }
+    .scorecard .bars { grid-template-columns: 1fr; }
+  }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="wrap">
+    <a class="back" href="/" aria-label="Back to portfolio">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Back to portfolio
+    </a>
+    <!-- TODO: replace with your real repo URL -->
+    <a class="repo" href="https://github.com/KevinLu1993/card-centering-analyzer" target="_blank" rel="noopener">View code on GitHub</a>
+  </div>
+</div>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="kind">Solo project · full-stack</div>
+    <h1>Card Centering Analyzer</h1>
+    <p class="lede">A full-stack tool that searches eBay listings and scores trading-card centering against PSA grading standards — so you can tell which raw cards are worth the grading submission fee before you buy.</p>
+
+    <div class="scorecard" aria-hidden="true">
+      <div class="row1">
+        <span class="big">98/100</span>
+        <span class="verdict">PSA 10 candidate</span>
+      </div>
+      <div class="bars">
+        <div>
+          <div class="bar-lbl">L/R: 50 / 50</div>
+          <div class="bar-track"><div class="bar-fill" style="width:50%"></div><div class="bar-mid"></div></div>
+        </div>
+        <div>
+          <div class="bar-lbl">T/B: 52 / 48</div>
+          <div class="bar-track"><div class="bar-fill" style="width:52%"></div><div class="bar-mid"></div></div>
+        </div>
+      </div>
+      <div class="note">Excellent centering with nearly perfect left–right balance and minimal top-heavy bias; borders are uniform around the full-art design.</div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="prose">
+    <div class="wrap">
+      <h2>The problem</h2>
+      <p>Getting a raw card professionally graded costs a submission fee per card, and <strong>centering</strong> is one of the biggest factors in whether a card lands a PSA 10 or a 9. Scanning through hundreds of eBay listings by eye to judge which raw cards are well-centered enough to be worth submitting is slow and error-prone.</p>
+      <p>This tool automates that triage: it pulls listings straight from eBay, scores each card's centering front and back, and surfaces the ones with real grade potential.</p>
+    </div>
+  </section>
+
+  <section class="prose">
+    <div class="wrap">
+      <h2>Search and analyze</h2>
+      <p>You enter a card, set filters — price range, minimum seller rating and feedback, and a minimum centering score — and the tool fetches matching listings from eBay and analyzes every card it finds.</p>
+
+      <figure>
+        <div class="shot"><img src="card-images/1.jpg" alt="Search results showing eBay listings scored for centering, each with a front and back score, left/right and top/bottom balance bars, and a written assessment." loading="lazy" /></div>
+        <figcaption><b>Each result is scored, not just listed.</b> For every card the tool reports a front and back centering score out of 100, the left/right and top/bottom border ratios as bars, and a short written assessment. Cards strong enough to grade are flagged as a <b>top pick</b>, and the summary bar tracks how many listings were found, analyzed, and passed the filters.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="prose">
+    <div class="wrap">
+      <h2>Two search modes</h2>
+      <p>Raw listings covers ordinary seller photos. The Authenticity Guarantee mode narrows to eBay's verified listings — useful because those sometimes use stock photos, in which case the tool flags centering as not assessable rather than guessing.</p>
+
+      <figure>
+        <div class="shot"><img src="card-images/2.jpg" alt="The Authenticity Guarantee search mode selected, with a note that verified listings may use stock photos." loading="lazy" /></div>
+        <figcaption><b>Authenticity Guarantee mode.</b> Switches the search to eBay's verified listings and warns when a photo looks like stock, so a stock image never gets scored as if it were the real card.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="prose">
+    <div class="wrap">
+      <h2>Viewed tracking</h2>
+      <p>When you're working through a lot of listings across several sessions, it's easy to lose track of what you've already checked. Marking a listing as viewed hides it from future runs so the tool only spends analysis on cards you haven't seen yet, and the list persists between sessions.</p>
+
+      <figure>
+        <div class="shot"><img src="card-images/3.jpg" alt="The Viewed tab listing 33 cards already marked as checked, each with its price, front and back score, and the time it was viewed." loading="lazy" /></div>
+        <figcaption><b>A running record of what you've checked.</b> Every card you mark viewed is saved with its scores, price, and timestamp, so re-running a search skips the ones you've already ruled on.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="prose">
+    <div class="wrap">
+      <h2>How it works</h2>
+      <p>A Node/Express backend sits between the browser and two external services — the eBay Browse API and a vision model — and does the work that can't safely run in the browser.</p>
+
+      <div class="flow">
+        <div class="step"><span class="n">1</span><p>The backend authenticates to the <b>eBay Browse API</b> with OAuth2 (caching the token until it expires) and runs the search with the user's filters.</p></div>
+        <div class="step"><span class="n">2</span><p>For each listing it pulls the full-resolution photos, fetches them server-side, and converts them to base64 — which also keeps API keys off the client and sidesteps image CORS limits.</p></div>
+        <div class="step"><span class="n">3</span><p>Each photo goes to a <b>vision model (Claude)</b> with a structured prompt that asks it to estimate the left/right and top/bottom border ratios, return a centering score, and describe what it sees, all as JSON.</p></div>
+        <div class="step"><span class="n">4</span><p>The backend applies <b>PSA-based scoring logic</b> — including PSA's more lenient 75/25 allowance on card backs — plus an optional back-whitening check, then the frontend filters, sorts, and renders the results.</p></div>
+      </div>
+
+      <div class="callout">
+        <p>The visual judgment — reading the borders in a real, often imperfect eBay photo — is done by the vision model, not hand-written image processing. Real listing photos have glare, tilt, holo patterns, and slabs that break classic edge-detection; handing the image to a vision model absorbs that variability. The engineering here is the pipeline around it: the eBay integration, the image handling, the PSA scoring rules, and the interface.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="prose">
+    <div class="wrap">
+      <h2>Stack</h2>
+      <div class="chips">
+        <span class="chip">Node.js</span>
+        <span class="chip">Express</span>
+        <span class="chip">eBay Browse API</span>
+        <span class="chip">Claude vision API</span>
+        <span class="chip">OAuth2</span>
+        <span class="chip">HTML / CSS / JS</span>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>Built by Kevin Lu · <a href="/">back to portfolio</a> · <a href="https://github.com/KevinLu1993/card-centering-analyzer" target="_blank" rel="noopener">source on GitHub</a></p>
+  </div>
+</footer>
+
+</body>
+</html>
